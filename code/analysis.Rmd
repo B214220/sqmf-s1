@@ -13,6 +13,61 @@ library(tidyverse)
 
 # Part I
 
+Part I consists of a set of semi-guided exercises that assess your understanding of statistical concepts and R code.
 
+There are a total of 10 exercises.
+
+## Excercise 1
+
+You are given three data file and you have to create one plot for each. Each data file requires you to read in the file, filter/transform the data and create a plot that shows a particular aspect of the data, as follows:
+
+1. `data_e1_1.csv`: Plot centred speech rate against f0 at vowel mid-point, by condition and group, faceting by vowel.
+2. `data_e1_2.csv`: Plot logged reaction times by language, environment, and age.
+3. `data_e1_3.csv`: Plot proportions of incorrect vs correct responses across trial number in the easy and difficult condition, faceting by priming setting.
+
+```{r e1-1}
+
+```
+
+```{r e1-2}
+
+```
+
+```{r e1-3}
+
+```
+
+
+# Exercise 2
+
+The following plots are not appropriate for the type of data they show.
+
+Briefly describe what is wrong with the plot and write code to create a more appropriate plot (looking at the data frame might help you).
+
+```{r ex-2-1}
+
+```
+
+```{r ex-2-1-your-code}
+
+```
+
+
+
+```{r ex-2-2}
+
+```
+
+```{r ex-2-2-your-code}
+
+```
+
+
+## Exercise 3
+
+Read the `ex_3.csv` file in R and obtain summary measures (central tendency: mean, median, or mode; and dispersion: standard deviation or min/max) for each variable in the data. Pick the appropriate measure of central tendency and dispersion for each variable.
 
 # Part II
+
+Part II requires you to conduct a full data analysis of a data set, from reading data to transforming and plotting it, to linear modelling and reporting.
+
