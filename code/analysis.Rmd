@@ -67,6 +67,66 @@ Briefly describe what is wrong with the plot and write code to create a more app
 
 Read the `ex_3.csv` file in R and obtain summary measures (central tendency: mean, median, or mode; and dispersion: standard deviation or min/max) for each variable in the data. Pick the appropriate measure of central tendency and dispersion for each variable.
 
+## Exercise 4
+
+Look at the following list of variables:
+
+- Vowel duration.
+- Formant values.
+- Accuracy.
+- Yes/no.
+- Reaction times.
+- Number of relative clauses.
+- Scots vs English.
+
+For each of these variables, specify whether it's (in principle) distributed according to a Gaussian, Bernoulli/Binomial or Poisson distribution.
+To to do, create a *vector of strings*, where `"G"` = Gaussian, `"B"` = Bernoulli/Binomial, `"P"` = Poisson. Make sure you list the strings in the order in which the variables appear in the list above.
+
+```{r ex-4}
+
+```
+
+**Extra question**: Are the Gaussian variables in the list exactly Gaussian? Briefly comment on this and if need be propose alternative distribution families for those variables and/or transformations one can apply to the variables to make them more Gaussian.
+
+## Exercise 5
+
+Look at the following table that represents the coding of a categorical predictor (assume we use the default alphabetical order). Explain what is wrong with it and write a new table with your solution (you can use <https://tablesgenerator.com/markdown_tables#> to format the markdown table).
+
+|             | Bangladeshi | Mandarin | English |
+|-------------|-------------|----------|---------|
+| Bangladeshi | 1           | 0        | 0       |
+| Mandarin    | 0           | 2        | 0       |
+| English     | 0           | 0        | 3       |
+
+## Exercise 6
+
+Explain what are the benefits of centring continuous predictors and using sum coding with categorical predictors.
+
+## Exercise 7
+
+Read the `data_e7.csv` file. It contains the following columns:
+
+- `subject`: the subject's ID.
+- `response`: whether the subject has pressed the `Left` or `Right` button.
+- `condition`: 
+- 
+
+Run a linear model that helps you answer the following question: Does ...?
+
+## Exercise 8
+
+Criticise the following linear model and run a more appropriate linear model to answer the following research question:
+
+## Exercise 9
+
+For each of the following 15 statements, say whether the statement is true or false.
+To do so, create a *logical vector* with a list of `TRUE` and `FALSE`.
+
+
+
+
+
+
 # Part II
 
 Part II requires you to conduct a full data analysis of a data set, from reading data to transforming and plotting it, to linear modelling and reporting.
