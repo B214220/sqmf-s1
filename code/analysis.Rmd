@@ -1,6 +1,6 @@
 ---
 title: "SQMF - Summative Assessment"
-author: "EXAM NUMBER"
+author: "YOUR EXAM NUMBER"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -10,6 +10,10 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = here::here())
 library(tidyverse)
 ```
+
+# Overview
+
+**IMPORTANT**: Remember to include your exam number as the author in the document preamble.
 
 # Part I
 
@@ -115,7 +119,18 @@ Run a linear model that helps you answer the following question: Does ...?
 
 ## Exercise 8
 
-Criticise the following linear model and run a more appropriate linear model to answer the following research question:
+Imagine you are asked to review a paper.
+Below you can find the description of a mock study, including the details of the linear model the researchers have run. The results are not included.
+
+> We recorded 50 subjects while they read 100 sentences on a screen. For each subject, half of the sentences were presented together with pictures of natural landscapes. The other half was presented together with pictures of urban landscapes. Background sounds were delivered via headphones to the subject in each trial of the natural and urban setting condition. For each setting (natural vs urban), half of the trials had natural sounds (birds, waterfalls, wind, waves, thunders) and half had urban sounds (traffic noise, sirens, people walking).
+
+> For each trial we measured speech rate as number of syllables per second (syl/s).
+The hypothesis is that speech rate will be faster in the urban setting trials relative to the natural setting trials. Moreover, the effect of background noise (natural vs urban sounds) will decrease speech rate in the natural setting but not in the urban setting. In other words, we expect the visual setting (natural vs urban) to prime speakers to slow down their speech rate, but we expect the auditory setting (natural vs urban) to make a difference only in the visual natural setting.
+
+> To assess these expectations, we ran a linear model using a Gaussian distribution with visual setting (natural vs urban) as the outcome variable. We included the following predictors: speech rate (centred) and auditory setting (natural vs urban). In R syntax: `lm(visual ~ speech_rate_c + auditory)`.
+
+Now criticise the analysis (i.e. explain what is wrong with it) and run a more appropriate linear model to assess the research hypotheses of the study based on the provided data (`data_e8.csv`).
+Report the model specification and results of your linear model.
 
 ## Exercise 9
 
