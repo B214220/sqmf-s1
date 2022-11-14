@@ -11,19 +11,43 @@ knitr::opts_knit$set(root.dir = here::here())
 library(tidyverse)
 ```
 
-# Overview
+# Instructions
 
-**IMPORTANT**: Remember to include your exam number as the author in the document preamble.
+**PLEASE READ CAREFULLY**
+
+**IMPORTANT**: Remember to include your exam number as the author in the document preamble above.
+
+**DUE THURSDAY 8 DECEMBER AT NOON**
+
+**You must submit both to GitHub and to Learn**. No exceptions will be made.
+
+The assessment is made of two parts:
+
+- **Part I** is a series of semi-guided exercises on topics and procedures covered in class.
+- **Part II** requires you to run a full data analysis of a data set from a set of four. You will have to pick one of the four data sets.
+
+Complete each exercise by completing tasks, answering questions and/or providing code if required.
+You will have to download the data for this assessment and copy it into the `data/` folder.
+A link to download the data will be provided via an announcement.
+
+When you are ready to submit:
+
+1. Render the Rmd file to HTML.
+2. Upload the Rmd and HTML file and the data files to GitHub. They should be uploaded in the correct folder (`code/` and `data/`).
+3. Create a confirmation file to upload  to Learn. **The file must be named with your exam number only**: for example, `B231789.txt`, `B098273.docx`. **Failure to upload the file or not naming the file appropriately will correspond to a fail.**
+
+
+
 
 # Part I
 
 Part I consists of a set of semi-guided exercises that assess your understanding of statistical concepts and R code.
 
-There are a total of 10 exercises.
+There are a total of 9 exercises.
 
 ## Excercise 1
 
-You are given three data file and you have to create one plot for each. Each data file requires you to read in the file, filter/transform the data and create a plot that shows a particular aspect of the data, as follows:
+You are given three data files and you have to create one plot for each. Each data file requires you to read in the file, filter/transform the data and create a plot that shows a particular aspect of the data, as follows:
 
 1. `data_e1_1.csv`: Plot centred speech rate against f0 at vowel mid-point, by condition and group, faceting by vowel.
 2. `data_e1_2.csv`: Plot logged reaction times by language, environment, and age.
@@ -42,27 +66,27 @@ You are given three data file and you have to create one plot for each. Each dat
 ```
 
 
-# Exercise 2
+## Exercise 2
 
 The following plots are not appropriate for the type of data they show.
 
 Briefly describe what is wrong with the plot and write code to create a more appropriate plot (looking at the data frame might help you).
 
-```{r ex-2-1}
+```{r e2-1}
 
 ```
 
-```{r ex-2-1-your-code}
+```{r e2-1-your-code}
 
 ```
 
 
 
-```{r ex-2-2}
+```{r e2-2}
 
 ```
 
-```{r ex-2-2-your-code}
+```{r e2-2-your-code}
 
 ```
 
@@ -86,11 +110,9 @@ Look at the following list of variables:
 For each of these variables, specify whether it's (in principle) distributed according to a Gaussian, Bernoulli/Binomial or Poisson distribution.
 To to do, create a *vector of strings*, where `"G"` = Gaussian, `"B"` = Bernoulli/Binomial, `"P"` = Poisson. Make sure you list the strings in the order in which the variables appear in the list above.
 
-```{r ex-4}
+```{r e4}
 
 ```
-
-**Extra question**: Are the Gaussian variables in the list exactly Gaussian? Briefly comment on this and if need be propose alternative distribution families for those variables and/or transformations one can apply to the variables to make them more Gaussian.
 
 ## Exercise 5
 
@@ -108,14 +130,42 @@ Explain what are the benefits of centring continuous predictors and using sum co
 
 ## Exercise 7
 
+Imagine you run the following study:
+
+Participants are asked to listen to nonce words and choose whether they think the word refers to a small or a big object.
+Half of the words are of the `kiki` type (back consonants and high front vowels), while half are of the `baba` type (front consonant and low vowels).
+The expectation is that `kiki` words should elicit more `small` responses and `baba` words more `big` responses.
+We also recorder reaction time and we expect shorter reaction times to correlate with a greater effect of hearing a `kiki` word vs a `baba` word.
+
 Read the `data_e7.csv` file. It contains the following columns:
 
 - `subject`: the subject's ID.
-- `response`: whether the subject has pressed the `Left` or `Right` button.
-- `condition`: 
-- 
+- `response`: whether the subject has chosen `small` or `big`.
+- `condition`: `kiki` vs `baba` word.
+- `RT`: reaction time in ms.
 
-Run a linear model that helps you answer the following question: Does ...?
+Make sure to change columns to factors if needed and to specify the order of levels.
+
+```{r e7-1}
+
+```
+
+
+Run a linear model that helps you answer the following questions:
+
+1. Do `baba` words elicit more `big` responses than `kiki` words?
+2. Is the effect of `baba` words on response greater with shorter reaction times?
+
+```{r e7-2}
+
+```
+
+Report the model specification and the results. Also include a plot of the model results.
+
+```{r e7-3}
+
+```
+
 
 ## Exercise 8
 
@@ -138,6 +188,35 @@ For each of the following 15 statements, say whether the statement is true or fa
 To do so, create a *logical vector* with a list of `TRUE` and `FALSE`.
 
 
+1. A p-value is the probability of the null hypothesis being true.
+
+2. Sum-coding a predictor sets the intercept to the grand mean for that predictor.
+
+3. A significant result is evidence for the alternative hypothesis.
+
+4. A 95% Confidence Interval indicates the probability of having obtained the true mean.
+
+5. The most appropriate distribution family for a dichotomous outcome variable is the Bernoulli family.
+
+6. The ultimate goal of statistics is to assess significance using p-values.
+
+7. Strip charts are appropriate to visualise the individual observations of a continuous variable.
+
+8. Variables included as random effects in a linear model cannot also be included as fixed effects.
+
+9. Linear models assume that the observations in the data are independent.
+
+10. The Student's *t*-statistic is a standardised measure for the difference between two means.
+
+11. About 68% of the data in a Gaussian distribution is contained within the range marked by mean - 1 SD and mean + 1 SD.
+
+12. The alpha level can only be 0.05.
+
+13. Reproducibility and replicability are the same thing.
+
+14. A study is *robust* when the same results are obtained with the same data but a different analysis.
+
+15. The types of predictor variables in a linear model decide which distribution family to use in the model.
 
 
 
