@@ -73,7 +73,9 @@ The following plots are not appropriate for the type of data they show.
 Briefly describe what is wrong with the plot and write code to create a more appropriate plot (looking at the data frame might help you).
 
 ```{r e2-1}
-
+data_e2_1 %>%
+  ggplot(aes(reponse, condition)) +
+  geom_point()
 ```
 
 ```{r e2-1-your-code}
@@ -83,7 +85,9 @@ Briefly describe what is wrong with the plot and write code to create a more app
 
 
 ```{r e2-2}
-
+data_e2_2 %>%
+  ggplot(aes(vot, fill = voicing)) +
+  geom_bar()
 ```
 
 ```{r e2-2-your-code}
