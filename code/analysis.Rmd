@@ -73,6 +73,8 @@ The following plots are not appropriate for the type of data they show.
 Briefly describe what is wrong with the plot and write code to create a more appropriate plot (looking at the data frame might help you).
 
 ```{r e2-1}
+data_e2_1 <- read_csv("data/data_e2_1.csv")
+
 data_e2_1 %>%
   ggplot(aes(reponse, condition)) +
   geom_point()
@@ -85,6 +87,8 @@ data_e2_1 %>%
 
 
 ```{r e2-2}
+data_e2_2 <- read_csv("data/data_e2_2.csv")
+
 data_e2_2 %>%
   ggplot(aes(vot, fill = voicing)) +
   geom_bar()
