@@ -1,6 +1,6 @@
 ---
 title: "SQMF - Summative Assessment"
-author: "YOUR EXAM NUMBER"
+author: "B214220"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -9,6 +9,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = here::here())
 library(tidyverse)
+library(sqmf)
+library(lme4)
+library(optimx)
+library(lmerTest)
+library(ggplot2)
+library(ggeffects)
 ```
 
 # Instructions
@@ -54,14 +60,54 @@ You are given three data files and you have to create one plot for each. Each da
 3. `data_e1_3.csv`: Plot proportions of incorrect vs correct responses across trial number in the easy and difficult condition, faceting by priming setting.
 
 ```{r e1-1}
+data_e1_1 <- read_csv("data/data_e1_1.csv")
 
+data_e1_1 %>%
+  ggplot(
+    aes(f0_midpoint, fill = condition)
+  ) +
+  geom_density(alpha = 0.5)
+ggsave("plot1.png", dpi = 300)
 ```
 
 ```{r e1-2}
+data_e1_2 <- read_csv("data/data_e1_2.csv")
 
+#language & environment
+data_e1_2 %>%
+  ggplot(aes(language, RT_ms)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "glm",
+              aes(colour = environment)) +
+  facet_grid(~ environment)
+ggsave("plot1_2_1.png", dpi = 300)
+
+#language & age
+data_e1_2 %>%
+  ggplot(aes(language, RT_ms)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "glm",
+              aes(colour = age)) +
+  facet_grid(~ age)
+ggsave("plot1_2_2.png", dpi = 300)
 ```
 
 ```{r e1-3}
+data_e1_3 <- read_csv("data/data_e1_3.csv")
+
+data_e1_3 %>%
+  ggplot(aes(subject, trial,
+             fill = accuracy)) +
+  geom_violin() +
+  geom_point(
+    position = position_jitterdodge(
+      jitter.width = 0.05,
+      dodge.width = 0.9
+    ),
+    alpha = 0.25
+  ) +
+  facet_grid(condition ~ priming)
+ggsave("plot1_3_1.png", dpi = 300)
 
 ```
 
@@ -72,36 +118,62 @@ The following plots are not appropriate for the type of data they show.
 
 Briefly describe what is wrong with the plot and write code to create a more appropriate plot (looking at the data frame might help you).
 
+'geom_bar' is used to visualize the distribution of a categorical variable, whereas 'geom_point' is used to visualize the relationship between two continuous variables.
+
 ```{r e2-1}
 data_e2_1 <- read_csv("data/data_e2_1.csv")
 
 data_e2_1 %>%
   ggplot(aes(reponse, condition)) +
   geom_point()
+ggsave("plot2_1_1.png", dpi = 300)
 ```
 
 ```{r e2-1-your-code}
-
+data_e2_1 <- read_csv("data/data_e2_1.csv")
+data_e2_1 %>%
+  ggplot(aes(reponse)) +
+  geom_bar()
+ggsave("plot2_1_2.png", dpi = 300)
 ```
-
-
-
 ```{r e2-2}
 data_e2_2 <- read_csv("data/data_e2_2.csv")
 
 data_e2_2 %>%
   ggplot(aes(vot, fill = voicing)) +
   geom_bar()
+
+ggsave("plot2_2_1.png", dpi = 300)
 ```
+When creating a bar plot using the 'ggplot()', the 'vot' (numeric) variable should be on the x-axis and the fill should be set to the 'voicing' (factor) variable. 
 
 ```{r e2-2-your-code}
+data_e2_2 <- read_csv("data/data_e2_2.csv")
 
+data_e2_2$vot <- as.numeric(data_e2_2$vot)
+
+data_e2_2$voicing <- as.factor(data_e2_2$voicing)
+
+data_e2_2 %>%
+  ggplot(aes(voicing, fill = vot)) +
+  geom_bar()
+
+ggsave("plot2_2_2.png", dpi = 300)
 ```
 
 
 ## Exercise 3
 
 Read the `ex_3.csv` file in R and obtain summary measures (central tendency: mean, median, or mode; and dispersion: standard deviation or min/max) for each variable in the data. Pick the appropriate measure of central tendency and dispersion for each variable.
+
+```{r e3}
+ex_3 <- read_csv("data/ex_3.csv")
+
+#to obtain summary measures for each variable
+summary(ex_3)
+```
+
+The variables 'response_particle', 'correct_particle', 'particle_accuracy', 'mean_accuracy', 'short, critical', and 'exp' are all character or factor variables, The appropriate measure of central tendency would be the mode, but it's important to note that the mode can be useful only if the variable has one mode. It's not appropriate to use measures of dispersion, such as standard deviation or range, since they are categorical variables. Instead, you could use measures such as frequency, percentages, or proportions to describe the distribution of the variable.
 
 ## Exercise 4
 
@@ -119,7 +191,11 @@ For each of these variables, specify whether it's (in principle) distributed acc
 To to do, create a *vector of strings*, where `"G"` = Gaussian, `"B"` = Bernoulli/Binomial, `"P"` = Poisson. Make sure you list the strings in the order in which the variables appear in the list above.
 
 ```{r e4}
+variables <- c("Vowel duration", "Formant values", "Accuracy", "Yes/no", "Reaction times", "Number of relative clauses", "Scots vs English")
 
+vector_of_strings <- c("G", "G", "B", "B", "G", "P", "B")
+
+data.frame(variables, vector_of_strings)
 ```
 
 ## Exercise 5
@@ -132,9 +208,23 @@ Look at the following table that represents the coding of a categorical predicto
 | Mandarin    | 0           | 2        | 0       |
 | English     | 0           | 0        | 3       |
 
+The original table is a way of coding a categorical predictor, but it has a problem where all the categories are included. This leads to unreliable results. A corrected table is made by excluding one category, this will give more accurate results.
+
+```{r e5}
+e5_corrected <- data.frame(Bangladeshi = c(1, 0, 0), Mandarin = c(0, 1, 0))
+
+colnames(e5_corrected) <- c("Bangladeshi", "Mandarin")
+
+rownames(e5_corrected) <- c("Bangladeshi", "Mandarin","English")
+
+e5_corrected 
+```
+
 ## Exercise 6
 
 Explain what are the benefits of centring continuous predictors and using sum coding with categorical predictors.
+
+Centering continuous predictors is a way to adjust the data so that it is easier to understand the effects of different predictors on the outcome. Sum coding is a way to simplify categorical predictors so it is easier to understand their effects on the outcome. It also allows for specific comparisons between categories rather than overall comparisons.
 
 ## Exercise 7
 
@@ -155,23 +245,52 @@ Read the `data_e7.csv` file. It contains the following columns:
 Make sure to change columns to factors if needed and to specify the order of levels.
 
 ```{r e7-1}
+data_e7 <- read_csv("data/data_e7.csv")
 
+data_e7$response <- factor(data_e7$response, levels = c("small", "big"))
+
+data_e7$condition <- factor(data_e7$condition, levels = c("kiki", "baba"))
 ```
 
 
 Run a linear model that helps you answer the following questions:
 
 1. Do `baba` words elicit more `big` responses than `kiki` words?
+
+It cannot be concluded that 'baba' words elicit more 'big' responses than 'kiki' words based on the model's summary. The p-value for the interaction term "responsebig:conditionbaba" is 8.96e-16, which is less than the significance level of 0.05. This suggests that the effect of responsebig is not the same across the two conditions (baba and kiki).
+
 2. Is the effect of `baba` words on response greater with shorter reaction times?
 
-```{r e7-2}
+Based on the p-value of 1.228207e-25 for the interaction term "RT:responsebig:conditionbaba", it can be concluded that the effect of 'baba' words on response is significantly greater with shorter reaction times.
 
+```{r e7-2}
+e7_lm <- lmer(RT ~ response * condition * RT + (condition | subject), data = data_e7)
+
+summary(e7_lm)
+
+p_value <- summary(e7_lm)$coefficients[,"Pr(>|t|)"]["RT:responsebig:conditionbaba"]
+
+p_value
 ```
 
 Report the model specification and the results. Also include a plot of the model results.
 
-```{r e7-3}
+The model specification is "RT ~ response * condition * RT + (condition | subject)" and the data used is "data_e7". The fixed effects estimates are as follows:
 
+* (Intercept) 414.24490
+* responsebig -413.09929
+* conditionbaba -414.24490
+* responsebig:conditionbaba 413.09929
+* RT:responsebig 0.99712
+* RT:conditionbaba 1.00000
+* RT:responsebig:conditionbaba -0.99712
+
+```{r e7-3}
+e7_lm <- lmer(RT ~ condition * response + ( response | subject ), data = data_e7)
+
+ggpredict(e7_lm, terms = c("condition [all]", "response")) %>% plot()
+
+ggsave("plo7_3.png", dpi = 300)
 ```
 
 
@@ -189,6 +308,32 @@ The hypothesis is that speech rate will be faster in the urban setting trials re
 
 Now criticise the analysis (i.e. explain what is wrong with it) and run a more appropriate linear model to assess the research hypotheses of the study based on the provided data (`data_e8.csv`).
 Report the model specification and results of your linear model.
+
+The study that is described in the mock research has some issues with the way it analyzes the data. The researchers want to see how different pictures and sounds affect how fast people speak. But the way they set up the analysis is not right for this kind of data. A more appropriate way to analyze the data would be to use a different type of statistical model that is better suited for this type of outcome. 
+
+```{r e8}
+data_e8 <- read_csv("data/data_e8.csv")
+
+e8_lm <- lmer(
+  speech_rate ~ setting*sound +
+    ( sound | subject ),
+  data = data_e8
+)
+
+summary(e8_lm)
+
+ggpredict(e8_lm, terms = c("setting [all]", "sound")) %>% plot()
+
+ggsave("plo8.png", dpi = 300)
+
+```
+
+* (Intercept) 4.58063
+* settingurban_set -0.84615
+* soundurban_sound 0.01285
+* settingurban_set:soundurban_sound -1.25387
+
+The summary of e8_lm is of a linear mixed-effects model, which allows for both fixed and random effects. In this case, it shows that the speech rate is affected by both setting (natural vs urban) and sound (natural vs urban) and the interaction between them, also it accounts for subject as a random effect.
 
 ## Exercise 9
 
@@ -226,10 +371,99 @@ To do so, create a *logical vector* with a list of `TRUE` and `FALSE`.
 
 15. The types of predictor variables in a linear model decide which distribution family to use in the model.
 
+```{r e9}
+statement <- c(
+    "A p-value is the probability of the null hypothesis being true.",
+    "Sum-coding a predictor sets the intercept to the grand mean for that predictor.
+",
+    "A significant result is evidence for the alternative hypothesis.",
+    "A 95% Confidence Interval indicates the probability of having obtained the true mean.",
+    "The most appropriate distribution family for a dichotomous outcome variable is the Bernoulli family.",
+    "The ultimate goal of statistics is to assess significance using p-values.",
+    "Strip charts are appropriate to visualise the individual observations of a continuous variable.",
+    "Variables included as random effects in a linear model cannot also be included as fixed effects.",
+    "Linear models assume that the observations in the data are independent.",
+    "The Student's t-statistic is a standardised measure for the difference between two means.",
+    "About 68% of the data in a Gaussian distribution is contained within the range marked by mean - 1 SD and mean + 1 SD.",
+    "The alpha level can only be 0.05.",
+    "Reproducibility and replicability are the same thing.",
+    "A study is robust when the same results are obtained with the same data but a different analysis.",
+    "The types of predictor variables in a linear model decide which distribution family to use in the model.")
 
+results <- c(FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
 
+logical_vector <- data.frame(number = 1:15, statement = statement, result = results)
+
+logical_vector
+```
 
 # Part II
 
 Part II requires you to conduct a full data analysis of a data set, from reading data to transforming and plotting it, to linear modelling and reporting.
+
+```{r Part II}
+ota2009 <- read_csv("data/ota2009.csv")
+
+#rt1
+rt1 <- lm(Words.RT ~ Condition * Item, data = ota2009)
+summary(rt1)
+
+coef(summary(rt1))[, "Estimate"] / coef(summary(rt1))[, "Std. Error"]
+
+#rt2
+rt2 <- lmer(Words.RT ~ Condition * Item + (Condition | Subject), data = ota2009)
+summary(rt2)
+
+coef(summary(rt2))[, "Estimate"] / coef(summary(rt2))[, "Std. Error"]
+
+ggpredict(rt2, terms = c("Item [all]", "Condition")) %>% plot()
+
+ggsave("plot_rt2.png", dpi = 300)
+
+#rt3
+rt3 <- ota2009 %>%
+  mutate(Words.ACC = as.numeric(Words.ACC))
+
+rt3_lm <- glmer(Words.ACC ~ Condition * Item + (Condition | Subject), data = rt3, family = binomial())
+
+summary(rt3_lm)
+
+coef(summary(rt3_lm))[, "Estimate"] / coef(summary(rt2))[, "Std. Error"]
+
+ggpredict(rt3_lm, terms = c("Item [all]", "Condition")) %>% plot()
+
+ggsave("plot_rt3_lm.png", dpi = 300)
+
+```
+
+From the output, the estimates, the standard errors, the t-values, p-values, and z-values for the three models:
+
+rt1:
+* (Intercept): Estimate = 2480.7720, Std. Error = 125.7137, df = 7532, t-value = 19.734, p-value = < 2e-16 *** (significant)
+* ConditionRelated: Estimate = -407.1216, Std. Error = 138.7544, df = 7532, t-value = -2.934, p-value = 0.00336 ** (significant)
+* ConditionUnrelated: Estimate = 311.3572, Std. Error = 140.6045, df = 7532, t-value = 2.214, p-value = 0.02683 * (significant)
+* Item: Estimate = -1.7597, Std. Error = 10.5753, df = 7532, t-value = -0.166, p-value = 0.86785 (not significant)
+* ConditionRelated:Item: Estimate = -0.3247, Std. Error = 10.6223, df = 7532, t-value = -0.031, p-value = 0.97561 (not significant)
+* ConditionUnrelated:Item: Estimate = -4.3193, Std. Error = 10.6215, df = 7532, t-value = -0.407, p-value = 0.68427 (not significant)
+
+rt2:
+* (Intercept): Estimate = 2467.552, Std. Error = 272.334, df = 25.087, t-value = 9.061, p-value = 2.19e-09 *** (significant)
+* ConditionRelated: Estimate = -393.902, Std. Error = 138.164, df = 117.732, t-value = -2.851, p-value = 0.00515 ** (significant)
+* ConditionUnrelated: Estimate = 319.628, Std. Error = 142.476, df = 98.732, t-value = 2.243, p-value = 0.02711 * (significant)
+* Item: Estimate = -0.314, Std. Error = 9.418, df = 7478.507, t-value = -0.033, p-value = 0.97341 (not significant)
+* ConditionRelated:Item:  Estimate = -1.770, Std. Error = 9.460, df = 7478.479, t-value = -0.187, p-value = 0.85155 (not significant)
+* ConditionUnrelated:Item: Estimate = -5.712, Std. Error = 9.459, df = 7478.456,  t-value = -0.604, p-value = 0.54595 (not significant)
+
+rt3\_lm:
+* (Intercept): Estimate = 3.1012259, Std. Error = 0.3309499, df = - 25.087, z-value = 9.371, p-value = < 2e-16 *** (significant)
+* ConditionRelated: Estimate = -0.3788133, Std. Error = 0.3541263, df = - 117.732, z-value = -1.070, p-value = 0.285 (not significant)
+* ConditionUnrelated: Estimate = -1.6040574, Std. Error = 0.3220155, df = - 98.732, -value = -4.981, p-value = 6.32e-07 \*\*\* (significant)
+* Estimate = 0.0095306, Std. Error = 0.0240687, df = - 7478.507, z-value = 0.396, p-value = 0.692 (not significant)
+* ConditionRelated:Item: Estimate = -0.0001109, Std. Error = 0.0241983, df = - 7478.479, z-value = -0.005, p-value = 0.996 (not significant)
+* ConditionUnrelated:Item: Estimate = 0.0162729, Std. Error = 0.0242024, - 7478.456, z-value = 0.672, p-value = 0.501 (not significant)
+
+
+Based on the analysis (please see Figure 9, Figure 10, and Output for Part 2) of the three models, remarkably, in rt1 and rt2, p-values are calculated using t-test and in rt3\_lm, p-values are calculated using z-test. The different type of response variable and the different type of model used in rt3\_lm is the reason that the estimates, standard errors and the degree of freedom (df) values stand out when compared to rt1 and rt2. The df value for each model indicates the amount of freedom the residuals have to vary, which affects the model's power to detect significant effects. For example, In rt1 the df is 7532, in rt2 df is 20 for the random effects and in rt3\_lm is 7526 for the residuals. In general, higher df values give the model more power to detect significant effects. Thus, the rt1 and rt3\_lm have a lot of power to detect significant effects. However, in sharp contrast, rt2 has less freedom to detect significant effects. In all three models, the intercept estimates are statistically significant, meaning that there is a strong association between the response variable and the intercept term. The low p-values and high t/z-values indicate that the intercept estimates are unlikely to be due to random chance. Additionally, the relatively small standard errors of the estimates in all three models suggest that the estimates are precise and the model fits the data well. 
+
+In a closer look of the output, it is evident that the condition of the word and the item have an effect on response time and accuracy. The first model, rt1, is a linear model that suggests a significant negative association between the condition "Related" and response time, and a significant positive association between the condition "Unrelated" and response time. In particular, it found that response time is affected by the condition of the word (i.e. related or unrelated) with t-value of -2.934 and p-value of 0.00336 \*\*. Likewise, the second model, rt2, is a linear mixed-effects model that suggests response time is affected by the condition of the word. There is variability in this effect within subjects, that is - response time is affected by word condition with t-value of -2.851 and p-value of 0.00515 \*\*. The third model, rt3\_lm, is a linear mixed-effects model that suggests a significant negative association between the condition "Unrelated" and accuracy. The results show a strong negative association between the condition of the word and accuracy, as indicated by a large z-value of -4.981 and significant p-value of 6.32e-07 ***. Overall, these models suggest that response time and accuracy are affected by the condition of the word and the item, and that there is variability in this effect within subjects.
 
